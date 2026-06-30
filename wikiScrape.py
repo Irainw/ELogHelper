@@ -35,6 +35,22 @@ class WikiScraper:
                 print(f"Failed to make soup for {url}.")
                 return None
 
+    def findLinks(self, url:str):
+        '''
+        Finds all links in the body content of the specified URL.
+        Arguments:
+            url (str): The URL to send a GET request to.
+        Returns:
+            A list of links found in the body content of the page.'''
+        
+        soup = self.soup(url)
+        if not soup:
+            print(f"Failed to find links for {url}.")
+            return []
+        links = soup.find(id = 'bodyContent').find_all('a')
+        scrapedLinks = [a for a in links if a['href'].startswith('/wiki/index.php')]
+        return scrapedLinks
+
     def articleData(self, url: str):
         '''
         Fetches an article page and returns its title, body text, and soup object.
@@ -56,8 +72,17 @@ class WikiScraper:
         title = titleNode.get_text(strip=True)
         text = bodyNode.get_text(" ", strip=True)
         return title, text, soup
-            
-    def scrapeArticle(self, url: str):
+
+    def cleanText(self, text: str) -> str:
+        '''
+        Cleans the text by removing image references and other unwanted content.
+        Arguments:
+            text (str): The text to clean.
+        Returns:
+            The cleaned text.'''
+        # Remove images, tables but preserve text, and links from the text  
+    
+    def recursiveScrapeArticle(self, url: str):
         '''
         Scrapes an article from the specified URL, extracts its title and text, and recursively scrapes a random linked article.
         Arguments:
@@ -69,11 +94,10 @@ class WikiScraper:
             print(f"Failed to scrape article for {url}.")
             return
         
-        links = soup.find(id='bodyContent').find_all('a')
-        scrapedLinks = [a for a in links if a['href'].startswith('/wiki/index.php')]
+        scrapedLinks = self.findLinks(url)
         
         if len(scrapedLinks) == 0:
             print('No links scraped')
         else:
             random_link = random.choice(scrapedLinks)
-            self.scrapeArticle(self.base_url + random_link['href'])
+            self.recursiveScrapeArticle(self.base_url + random_link['href'])
