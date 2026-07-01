@@ -4,7 +4,7 @@ import random
 
 
 class WikiScraper:
-    def __init__(self, base_url: "https://aosd.slac.stanford.edu/wiki/index.php/"):
+    def __init__(self, base_url: str = "https://aosd.slac.stanford.edu/wiki/index.php/"):
         self.base_url = base_url
         
     def request(self, url: str):
