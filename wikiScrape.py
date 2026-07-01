@@ -4,8 +4,8 @@ import random
 
 
 class WikiScraper:
-    def __init__(self, base_url: str = "https://aosd.slac.stanford.edu/wiki/index.php/"):
-        self.base_url = base_url
+    def __init__(self, baseURL: str = "https://aosd.slac.stanford.edu/wiki/index.php/"):
+        self.base_url = baseURL
         
     def request(self, url: str):
         '''
@@ -72,15 +72,6 @@ class WikiScraper:
         title = titleNode.get_text(strip=True)
         text = bodyNode.get_text(" ", strip=True)
         return title, text, soup
-
-    def cleanText(self, text: str) -> str:
-        '''
-        Cleans the text by removing image references and other unwanted content.
-        Arguments:
-            text (str): The text to clean.
-        Returns:
-            The cleaned text.'''
-        # Remove images, tables but preserve text, and links from the text  
     
     def recursiveScrapeArticle(self, url: str):
         '''
